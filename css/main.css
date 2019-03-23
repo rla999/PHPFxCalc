@@ -1,0 +1,65 @@
+/*
+Ryan Lasher
+PHP Project - Lab #3
+February 20, 2019
+*/
+
+/*
+Color scheme generated randomly by coolors.io
+
+#868584 - medium gray
+#161612 - off black
+#AAD2BA - light beige green????
+#97E6FF - sky blue
+#713E5A - burgandy
+*/
+
+body {
+    background: #868584;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    line-height: 1.5;
+    text-align: center;
+}
+
+input.textField {
+    padding-left: 10px;
+    text-align: left;
+}
+
+input.button::selection {
+    color: #AAD2BA;
+}
+
+h1 {
+    color: #97E6FF;
+}
+
+h3 {
+    color: #713E5A;
+}
+
+label {
+    padding-right: 12px;
+}
+
+main {
+    border-top: 1px solid #92B1CD;
+    border-bottom: 1px solid #92B1CD;
+    margin: 0 auto;
+    max-width: 990px;
+    padding: 10px;
+    width: 100%;
+}
+
+p {
+    color: #161612;
+    font-size: 0.8em;
+}
+
+select {
+    padding-right: 15px;
+}
+
+#loggedInNotice {
+    position: absolute; bottom: 10px; right: 10px;
+}
