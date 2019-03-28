@@ -1,5 +1,6 @@
 # PHPFxCalc
 This is an ongoing project in my PHP web dev class that I take at my local community college. Starting with lab 4, I will keep all commits in this repo instead of making new repos for each lab where I change or add stuff, since I am now gonna start actively using Github.
+To see any versions of this app prior to Lab 4, please consult other repos on my account.
 
 <h2> <strong>Changelog:</strong> </h2>
 
