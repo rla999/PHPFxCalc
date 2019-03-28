@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <?php
+//If the session variable doesn't already exist, then start a new session. This prevents endless loops.
+if (!isset($_SESSION)) {
+    session_start();
+}
+
 //Import the LoginDataModel class.
+//Import the FxDataModel class.
 require_once('LoginDataModel.php');
+require_once('FxDataModel.php');
 
 //Initialize an object of the LoginDataModel class.
 //Initialize a variable to fetch the associative array of the fxUsers.ini file from the LoginDataModel class.
 //Initialize a variable to fetch the associative array of the login.ini file from the LoginDataModel class.
 $fxLogin = new LoginDataModel();
-//$userArray = $fxLogin->getUserArray();
+$userArray = $fxLogin->getUserArray();
 $loginArray = $fxLogin->getLoginArray();
 
 //Set username and password to empty strings
@@ -20,7 +27,9 @@ if (array_key_exists($loginArray[$fxLogin::USERNAME], $_POST)) {
     $password = filter_input(INPUT_POST, $loginArray[$fxLogin::PASSWORD]);
 
     //Perform error handling.
-    if ($fxLogin->validateUser($username, $password) == true) {//If the validation passes...
+    if (isset($username) && $fxLogin->validateUser($username, $password) == true) {//If the validation passes...
+        // Set the session.
+        $_SESSION[$fxLogin::USERNAME] = $username;
         //Load fxCalc.php when valid login is submitted.
         include $fxLogin::FX_CALC_FORM_URL;
         exit(); //Stop processing the login stuff!
