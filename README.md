@@ -3,6 +3,13 @@ This is an ongoing project in my PHP web dev class that I take at my local commu
 
 <h2> <strong>Changelog:</strong> </h2>
 
+<h3>Lab 5 (03/28/2019): </h3>
+<ul>
+  <li>I modified the login and calulcator pages to add security by checking to see if a session already exists for the user and if not, redirecting them back to the login page.</li>
+  <li>Also welcomes them on the calculator page!</li>
+  <li>No logout button or any mechanism for destroying the session yet unless the user is savvy enough to destroy their browser cookies. :) </li>
+  </ul>
+
 <h3>Lab 4 (03/22/2019): </h3>
 <ul>
   <li>Added a login functionality as we are introduced to the MVC model. Right now, there is an INI file that stores the parameters for the login form and another INI file that stores the valid user/password combos.</li>
