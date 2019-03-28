@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <?php
+//Check if a session is already set! If it is, then bypass the login page.
+if (!isset($_SESSION)) {
+    session_start();
+}
+$username = "";
+
+//Import the LoginDataModel class to our form page.
+require_once ('LoginDataModel.php');
+//Check if the session username is set. If it's not, return to login.php. Important for our security!
+if (isset($_SESSION[LoginDataModel::USERNAME])) {
+    $username = $_SESSION[LoginDataModel::USERNAME];
+} else {
+    include 'login.php';
+    exit;
+}
+
 //Import our FX Data Model class into the form page so that we can refer to it's variables and functions.
 require_once('FxDataModel.php');
-require_once ('LoginDataModel.php');
 
 //Initialize the FX Calc Data Model class.
 $fxDataModel = new FxDataModel();
@@ -43,6 +58,7 @@ if (isset($_POST[$fxDataModel::CONVERT_BUTTON])) {
     <body>
         <header>
             <h1>Ryan's Super F/X Calculator</h1>
+            <h2>Welcome <?php echo $username ?></h2>
         </header>
         <br/>
         <main>
