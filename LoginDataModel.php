@@ -14,6 +14,7 @@ class LoginDataModel {
     const RESET_BUTTON = "reset";
     const LOGIN_FORM_URL = "login.php";
     const LOGIN_FORM_NAME = "login.form";
+    const LOGIN_DATA_MODEL = "LoginDataModel.php";
 
     //Private data members
     private $loginArray;
