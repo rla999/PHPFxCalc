@@ -10,7 +10,7 @@ class FxDataModel {
     const FX_RATES_CSV_KEY = "fx.rates.file";
     const SOURCE_AMOUNT_KEY = "src.amt";
     const SOURCE_CURRENCY_KEY = "src.cucy";
-    const DATA_MODEL_KEY = "FxDataModel.php";
+    const FX_DM_KEY = "FxDataModel.php";
     const LOGIN_FORM_URL = "login.php";
     const FORM_NAME = "fxCalc.php";
     const FORM_NAME_TITLE = "fxCalc";
