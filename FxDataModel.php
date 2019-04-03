@@ -28,7 +28,6 @@ class FxDataModel
     private $fxCurrencies; //CURRENCY CODES
     private $fxRates; //FX RATES ARRAY
     private $iniArray; //Associative array for INI file.
-    private $rate_stmt; // RATE SELECT SQL STATEMENT
 
     /*
      * A no argument constructor. 
@@ -45,16 +44,16 @@ class FxDataModel
          */
         $this->iniArray = parse_ini_file(FX_CALC_INI_FILE);
         $fxPDO = new PDO($this->iniArray[self::DBHANDLE], $this->iniArray[self::DBUSER], $this->iniArray[self::DBPW]);
-        $this->rate_stmt = $fxPDO->prepare($this->iniArray[self::SELECT_RATE_STATEMENT]);
-        $this->rate_stmt->execute();
-        while ($result = $this->rate_stmt->fetch()){
+        $rate_stmt = $fxPDO->prepare($this->iniArray[self::SELECT_RATE_STATEMENT]);
+        $rate_stmt->execute();
+        while ($result = $rate_stmt->fetch()){
             $srcCucy = $result['srcCucy'];
             $this->fxCurrencies[] = $srcCucy;
             $dstCucy = $result["dstCucy"];
             $rate = $result["fxRate"];
             $this->fxRates[$srcCucy.$dstCucy] = $rate;
         }
-        $this->rate_stmt->closeCursor();
+        $rate_stmt->closeCursor();
         $fxPDO=null;
 
     }
