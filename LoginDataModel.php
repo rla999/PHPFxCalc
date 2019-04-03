@@ -32,7 +32,7 @@ class LoginDataModel
     {
         $this->loginArray = parse_ini_file(LOGIN_INI_FILE);
         $this->loginPDO = new PDO($this->loginArray[self::DBHANDLE],$this->loginArray[self::DBUSER],$this->loginArray[self::DBPW]);
-        this->prep_stmt=$this->loginPDO->prepare($this->loginArray[self::SELECT_STATEMENT]);
+        $this->prep_stmt=$this->loginPDO->prepare($this->loginArray[self::SELECT_STATEMENT]);
     }
 
     /*
