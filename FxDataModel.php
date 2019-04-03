@@ -8,7 +8,6 @@ class FxDataModel
     //IMPORTANT CONSTANTS!
     const DEST_AMOUNT_KEY = "dst.amt";
     const DEST_CUREENCY_KEY = "dst.cucy";
-    const FX_RATES_CSV_KEY = "fx.rates.file";
     const SOURCE_AMOUNT_KEY = "src.amt";
     const SOURCE_CURRENCY_KEY = "src.cucy";
     const FX_DM_KEY = "FxDataModel.php";
@@ -19,10 +18,17 @@ class FxDataModel
     const RESET_BUTTON = "reset";
     const LOGOUT_BUTTON = "logout";
 
+    const DBHANDLE = "db.handle";
+    const DBUSER = "db.user";
+    const DBPW = "db.pw";
+    const SELECT_RATE_STATEMENT = 'rate.stmt';
+    const RATE_ROW = 'rate.row';
+
     //DEFINE PRIVATE DATA MEMBERS:
     private $fxCurrencies; //CURRENCY CODES
-    private $fxRates; //FX RATES CSV
+    private $fxRates; //FX RATES ARRAY
     private $iniArray; //Associative array for INI file.
+    private $rate_stmt; // RATE SELECT SQL STATEMENT
 
     /*
      * A no argument constructor. 
@@ -34,19 +40,23 @@ class FxDataModel
     {
         /*
          * This function reads the first line of currency codes and populate a private string array data member named fxCurrencies. 
-         * Then the constructor reads the rest of the file. 
+         * Then the constructor reads the rest of the DB. 
          * In doing so it must build a private two-dimensional array data member named fxRates that contains the rates.
          */
 
-        $this->iniArray = parse_ini_file(FX_CALC_INI_FILE); //Parse the INI file and assign it to the array variable.
-        if (($handle = fopen($this->iniArray[self::FX_RATES_CSV_KEY], 'r')) !== false) { //Open the fxRates.csv file and create a handle variable to reference elsewhere.
-            if (($this->fxCurrencies = fgetcsv($handle)) !== false) { //This function reads the CSV file from the handle.
-                while (($this->fxRates[] = fgetcsv($handle, 'r')) !== false) { //Populate fXRates array.
-                    continue;
-                }
-            }
+        $fxPDO = new PDO($this->iniArray[self::DBHANDLE], $this->iniArray[self::DBUSER], $this->iniArray[self::DBPW]);
+        $this->rate_stmt = $fxPDO->prepare($this->iniArray[self::SELECT_RATE_STATEMENT]);
+        $this->rate_stmt->execute();
+        while ($result = $this->rate_stmt->fetch()){
+            $srcCucy = $result['srcCucy'];
+            $this->fxCurrencies[] = $srcCucy;
+            $dstCucy = $result["dstCucy"];
+            $rate = $result["fxRate"];
+            $this->fxRates[$srcCucy.$dstCucy] = $rate;
         }
-        fclose($handle); //close the file using the assigned currency handle.
+        $this->rate_stmt->closeCursor();
+        $fxPDO=null;
+
     }
 
     //Returns the array of country codes.
@@ -62,25 +72,14 @@ class FxDataModel
     }
 
     //Returns the currency exchange rate.
-    public function getFxRate($sourceCurrency, $destCurrency)
+    public function getFxRate($srcCucy, $dstCucy)
     {
-        $in = 0;
-        $len = count($this->fxCurrencies);
-        $out = 0;
-
-        for (; $in < $len; $in++) { //Assign the 'in' rate to SOURCE_CURRENCY_KEY
-            if ($this->fxCurrencies[$in] == $sourceCurrency) {
-                break;
-            }
+        if($srcCucy===$dstCucy){
+            return 1;
         }
-
-        for (; $out < $len; $out++) { //Assign the 'out' rate to DEST_CUREENCY_KEY
-            if ($this->fxCurrencies[$out] == $destCurrency) {
-                break;
-            }
+        else{
+            return $this->fxRates[$srcCucy.$dstCucy];
         }
-
-        return $this->fxRates[$in][$out];
     }
 }
 
