@@ -2,9 +2,10 @@
 
 define('FX_CALC_INI_FILE', 'fxCalc.ini'); //Define a constant for the relative location of the INI file.
 
-class FxDataModel {
+class FxDataModel
+{
 
-//IMPORTANT CONSTANTS!
+    //IMPORTANT CONSTANTS!
     const DEST_AMOUNT_KEY = "dst.amt";
     const DEST_CUREENCY_KEY = "dst.cucy";
     const FX_RATES_CSV_KEY = "fx.rates.file";
@@ -18,7 +19,7 @@ class FxDataModel {
     const RESET_BUTTON = "reset";
     const LOGOUT_BUTTON = "logout";
 
-//DEFINE PRIVATE DATA MEMBERS:
+    //DEFINE PRIVATE DATA MEMBERS:
     private $fxCurrencies; //CURRENCY CODES
     private $fxRates; //FX RATES CSV
     private $iniArray; //Associative array for INI file.
@@ -29,7 +30,8 @@ class FxDataModel {
      * The constructor will then read the rates file specified in the ini file.
      */
 
-    public function __construct() {
+    public function __construct()
+    {
         /*
          * This function reads the first line of currency codes and populate a private string array data member named fxCurrencies. 
          * Then the constructor reads the rest of the file. 
@@ -37,9 +39,9 @@ class FxDataModel {
          */
 
         $this->iniArray = parse_ini_file(FX_CALC_INI_FILE); //Parse the INI file and assign it to the array variable.
-        if (( $handle = fopen($this->iniArray[self::FX_RATES_CSV_KEY], 'r') ) !== FALSE) { //Open the fxRates.csv file and create a handle variable to reference elsewhere.
-            if (($this->fxCurrencies = fgetcsv($handle) ) !== FALSE) { //This function reads the CSV file from the handle.
-                while (($this->fxRates[] = fgetcsv($handle, 'r') ) !== FALSE) { //Populate fXRates array.
+        if (($handle = fopen($this->iniArray[self::FX_RATES_CSV_KEY], 'r')) !== false) { //Open the fxRates.csv file and create a handle variable to reference elsewhere.
+            if (($this->fxCurrencies = fgetcsv($handle)) !== false) { //This function reads the CSV file from the handle.
+                while (($this->fxRates[] = fgetcsv($handle, 'r')) !== false) { //Populate fXRates array.
                     continue;
                 }
             }
@@ -47,18 +49,21 @@ class FxDataModel {
         fclose($handle); //close the file using the assigned currency handle.
     }
 
-//Returns the array of country codes.
-    public function getFxCurrencies() {
+    //Returns the array of country codes.
+    public function getFxCurrencies()
+    {
         return $this->fxCurrencies;
     }
 
-//Returns the associative array INI file.
-    public function getIniArray() {
+    //Returns the associative array INI file.
+    public function getIniArray()
+    {
         return $this->iniArray;
     }
 
-//Returns the currency exchange rate.
-    public function getFxRate($sourceCurrency, $destCurrency) {
+    //Returns the currency exchange rate.
+    public function getFxRate($sourceCurrency, $destCurrency)
+    {
         $in = 0;
         $len = count($this->fxCurrencies);
         $out = 0;
@@ -77,7 +82,6 @@ class FxDataModel {
 
         return $this->fxRates[$in][$out];
     }
-
 }
 
-?>
+ 

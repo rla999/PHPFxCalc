@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-//Check if a session is already set! If it is, then bypass the login page.
+ //Check if a session is already set! If it is, then bypass the login page.
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -63,114 +63,112 @@ if (isset($_POST[$fxDataModel::CONVERT_BUTTON])) {
 
 <!--Start of the HTML form!-->
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Ryan's F/X Calculator</title>
-        <link href="css/main.css" rel="stylesheet" type="text/css"/> <!--Link the CSS to the page.-->
-    </head>
 
-    <body>
-        <header>
-            <h1>Ryan's Super F/X Calculator</h1>
-            <h2>Welcome <?php
-                echo $username;
-                ?></h2>
-        </header>
-        <br/>
-        <main>
-            <form name="<?php
-            echo $fxDataModel::FORM_NAME_TITLE;
-            ?>" action="<?php
-                  echo $fxDataModel::FORM_NAME;
-                  ?>" method="post">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Ryan's F/X Calculator</title>
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <!--Link the CSS to the page.-->
+</head>
 
-                <h3>Choose your source currency code and enter the amount as precise as you want it.</h3>
-                <select name="<?php
-                echo $iniArray[$fxDataModel::SOURCE_CURRENCY_KEY];
-                ?>">
-                            <?php
-                            foreach ($fxCurrencies as $fxCurrency) {
-                                ?>
-                        <option value="<?php
-                        echo $fxCurrency;
-                        ?>"
-                                <?php
-                                if ($fxCurrency === $sourceCurrency) {
-                                    ?>
-                                    selected
-                                    <?php
-                                }
-                                ?>
-                                ><?php
+<body>
+    <header>
+        <h1>Ryan's Super F/X Calculator</h1>
+        <h2>Welcome <?php
+                    echo $username;
+                    ?></h2>
+    </header>
+    <br />
+    <main>
+        <form name="<?php
+                    echo $fxDataModel::FORM_NAME_TITLE;
+                    ?>" action="<?php
+                        echo $fxDataModel::FORM_NAME;
+                        ?>" method="post">
+
+            <h3>Choose your source currency code and enter the amount as precise as you want it.</h3>
+            <select name="<?php
+                            echo $iniArray[$fxDataModel::SOURCE_CURRENCY_KEY];
+                            ?>">
+                <?php
+                foreach ($fxCurrencies as $fxCurrency) {
+                    ?>
+                <option value="<?php
+                                echo $fxCurrency;
+                                ?>" <?php
+                            if ($fxCurrency === $sourceCurrency) {
+                                ?> selected <?php
+
+                                            }
+                                            ?>><?php
                                     echo $fxCurrency;
                                     ?></option>
-                        <?php
-                    }
+                <?php
+
+            }
+            ?>
+            </select>
+
+            <input type="text" name="<?php
+                                        echo $iniArray[$fxDataModel::SOURCE_AMOUNT_KEY];
+                                        ?>" value="<?php
+                            if (!is_numeric($sourceAmount)) {
+                                echo " ";
+                            } else {
+                                echo $sourceAmount;
+                            }
+                            ?>" class="textField" />
+
+            <br />
+
+            <h3>Now choose your destination currency code and click CALCULATE to receive your result!</h3>
+            <select name="<?php
+                            echo $iniArray[$fxDataModel::DEST_CUREENCY_KEY];
+                            ?>">
+                <?php
+                foreach ($fxCurrencies as $newcurrency) {
                     ?>
-                </select>
+                <option value="<?php
+                                echo $newcurrency;
+                                ?>" <?php
+                            if ($newcurrency === $destCurrency) {
+                                ?> selected <?php
 
-                <input type="text" name="<?php
-                echo $iniArray[$fxDataModel::SOURCE_AMOUNT_KEY];
-                ?>" value="<?php
-                       if (!is_numeric($sourceAmount)) {
-                           echo " ";
-                       } else {
-                           echo $sourceAmount;
-                       }
-                       ?>" class="textField"/>
-
-                <br/>
-
-                <h3>Now choose your destination currency code and click CALCULATE to receive your result!</h3>
-                <select name="<?php
-                echo $iniArray[$fxDataModel::DEST_CUREENCY_KEY];
-                ?>">
-                            <?php
-                            foreach ($fxCurrencies as $newcurrency) {
-                                ?>
-                        <option value="<?php
-                        echo $newcurrency;
-                        ?>"
-
-                                <?php
-                                if ($newcurrency === $destCurrency) {
-                                    ?>
-                                    selected
-                                    <?php
-                                }
-                                ?>
-                                ><?php
+                                            }
+                                            ?>><?php
                                     echo $newcurrency;
                                     ?></option>
-                        <?php
-                    }
-                    ?>
-                </select>
+                <?php
 
-                <input type="text" readonly name="<?php
-                echo $iniArray[$fxDataModel::DEST_AMOUNT_KEY];
-                ?>" id="outputText" class="textField" value="<?php
-                       if (isset($_POST[$fxDataModel::CONVERT_BUTTON])) {
-                           echo $destAmount;
-                       }
-                       ?>"/>
+            }
+            ?>
+            </select>
 
-                <br/><br/>
+            <input type="text" readonly name="<?php
+                                                echo $iniArray[$fxDataModel::DEST_AMOUNT_KEY];
+                                                ?>" id="outputText" class="textField" value="<?php
+                                                                if (isset($_POST[$fxDataModel::CONVERT_BUTTON])) {
+                                                                    echo $destAmount;
+                                                                }
+                                                                ?>" />
 
-                <input type="submit" name="<?php
-                echo $fxDataModel::CONVERT_BUTTON;
-                ?>" value="CALCULATE" class="button"/>
-                <input type="reset" name="<?php
-                echo $fxDataModel::RESET_BUTTON;
-                ?>" value="RESET" onclick="window.location.href = 'fxCalc.php'" class="button"/>
+            <br /><br />
 
-            </form>
-        </main>
+            <input type="submit" name="<?php
+                                        echo $fxDataModel::CONVERT_BUTTON;
+                                        ?>" value="CALCULATE" class="button" />
+            <input type="reset" name="<?php
+                                        echo $fxDataModel::RESET_BUTTON;
+                                        ?>" value="RESET" onclick="window.location.href = 'fxCalc.php'" class="button" />
 
-        <br/>
+        </form>
+    </main>
 
-        <footer>
-            <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
-        </footer>
-    </body>
-</html>
+    <br />
+
+    <footer>
+        <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
+    </footer>
+</body>
+
+</html> 

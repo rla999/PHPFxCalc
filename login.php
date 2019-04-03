@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-//If the session variable doesn't already exist, then start a new session. This prevents endless loops.
+ //If the session variable doesn't already exist, then start a new session. This prevents endless loops.
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -27,7 +27,7 @@ if (array_key_exists($loginArray[$fxLogin::USERNAME], $_POST)) {
     $password = filter_input(INPUT_POST, $loginArray[$fxLogin::PASSWORD]);
 
     //Perform error handling.
-    if (isset($username) && $fxLogin->validateUser($username, $password) == true) {//If the validation passes...
+    if (isset($username) && $fxLogin->validateUser($username, $password) == true) { //If the validation passes...
         // Set the session.
         $_SESSION[$fxLogin::USERNAME] = $username;
         //Load fxCalc.php when valid login is submitted.
@@ -41,30 +41,34 @@ if (array_key_exists($loginArray[$fxLogin::USERNAME], $_POST)) {
 
 <!--Start of the HTML form!-->
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Login to Ryan's F/X Calculator</title>
-        <link href="css/main.css" rel="stylesheet" type="text/css"/> <!--Link the CSS to the page.-->
-    </head>
-    <body>
-        <header>
-            <h1>Login to Ryan's Super F/X Calculator</h1>
-        </header>
-        <br/>
-        <main>
-            <form name="<?php echo $loginArray[$fxLogin::LOGIN_FORM_NAME] ?>" action="<?php echo $fxLogin::LOGIN_FORM_URL ?>" method="post">
-                <label>Username: </label><input name="<?php echo $loginArray[$fxLogin::USERNAME] ?>" value="<?php
-                if (isset($_POST[$fxLogin::LOGIN_BUTTON])) {
-                    echo $username;
-                }
-                ?>" type="text" /><br /><br />
-                <label>Password: </label><input name="<?php echo $loginArray[$fxLogin::PASSWORD] ?>" value="<?php echo $password ?>" type="password" /><br /><br />
-                <input type="submit" value="LOGIN" name="<?php echo $fxLogin::LOGIN_BUTTON; ?>" class="button" id="loginButton"/>
-                <input type="reset" value="RESET" name="<?php echo $fxLogin::RESET_BUTTON; ?>" onclick="window.location.href = 'login.php'" class="button" id="resetButton"/>
-            </form>
-        </main>
-        <footer>
-            <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
-        </footer>
-    </body>
-</html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Login to Ryan's F/X Calculator</title>
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <!--Link the CSS to the page.-->
+</head>
+
+<body>
+    <header>
+        <h1>Login to Ryan's Super F/X Calculator</h1>
+    </header>
+    <br />
+    <main>
+        <form name="<?php echo $loginArray[$fxLogin::LOGIN_FORM_NAME] ?>" action="<?php echo $fxLogin::LOGIN_FORM_URL ?>" method="post">
+            <label>Username: </label><input name="<?php echo $loginArray[$fxLogin::USERNAME] ?>" value="<?php
+                                                                                                        if (isset($_POST[$fxLogin::LOGIN_BUTTON])) {
+                                                                                                            echo $username;
+                                                                                                        }
+                                                                                                        ?>" type="text" /><br /><br />
+            <label>Password: </label><input name="<?php echo $loginArray[$fxLogin::PASSWORD] ?>" value="<?php echo $password ?>" type="password" /><br /><br />
+            <input type="submit" value="LOGIN" name="<?php echo $fxLogin::LOGIN_BUTTON; ?>" class="button" id="loginButton" />
+            <input type="reset" value="RESET" name="<?php echo $fxLogin::RESET_BUTTON; ?>" onclick="window.location.href = 'login.php'" class="button" id="resetButton" />
+        </form>
+    </main>
+    <footer>
+        <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
+    </footer>
+</body>
+
+</html> 

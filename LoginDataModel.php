@@ -3,7 +3,8 @@
 define('USER_INI_FILE', 'fxUsers.ini');
 define('LOGIN_INI_FILE', 'login.ini');
 
-class LoginDataModel {
+class LoginDataModel
+{
 
     //CONSTANTS
     const USERNAME = "username";
@@ -21,7 +22,8 @@ class LoginDataModel {
     private $userArray;
 
     //Login Data Model constructor
-    public function __construct() {
+    public function __construct()
+    {
         $this->userArray = parse_ini_file(USER_INI_FILE);
         $this->loginArray = parse_ini_file(LOGIN_INI_FILE);
     }
@@ -32,22 +34,23 @@ class LoginDataModel {
      * this method can return TRUE if the pair agree; FALSE, otherwise. 
      */
 
-    public function validateUser($username, $password) {
-        return array_key_exists($username, $this->userArray) &&
-                ( $this->userArray[$username] == $password );
+    public function validateUser($username, $password)
+    {
+        return array_key_exists($username, $this->userArray) && ($this->userArray[$username] == $password);
     }
 
     //Return the associative array for the login INI file.
-    public function getLoginArray() {
+    public function getLoginArray()
+    {
         return $this->loginArray;
     }
 
     //Return the associative array for the fxUsers INI file.
 
-    public function getUserArray() {
+    public function getUserArray()
+    {
         return $this->userArray;
     }
-
 }
 
-?>
+ 
