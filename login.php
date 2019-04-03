@@ -14,7 +14,6 @@ require_once('FxDataModel.php');
 //Initialize a variable to fetch the associative array of the fxUsers.ini file from the LoginDataModel class.
 //Initialize a variable to fetch the associative array of the login.ini file from the LoginDataModel class.
 $fxLogin = new LoginDataModel();
-$userArray = $fxLogin->getUserArray();
 $loginArray = $fxLogin->getLoginArray();
 
 //Set username and password to empty strings
