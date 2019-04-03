@@ -43,7 +43,7 @@ class FxDataModel
          * Then the constructor reads the rest of the DB. 
          * In doing so it must build a private two-dimensional array data member named fxRates that contains the rates.
          */
-
+        $this->iniArray = parse_ini_file(FX_CALC_INI_FILE);
         $fxPDO = new PDO($this->iniArray[self::DBHANDLE], $this->iniArray[self::DBUSER], $this->iniArray[self::DBPW]);
         $this->rate_stmt = $fxPDO->prepare($this->iniArray[self::SELECT_RATE_STATEMENT]);
         $this->rate_stmt->execute();
