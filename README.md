@@ -4,6 +4,12 @@ To see any versions of this app prior to Lab 4, please consult other repos on my
 
 <h2> <strong>Changelog:</strong> </h2>
 
+<h3>Lb 6 (04/03/2019): </h3>
+<ul>
+  <li>I changed the LoginDataModel and the FxDataModel to allow a database connection to a local MySQL database for storing the users/passwords and the currency information.</li>
+  <li>So no more csv file and no more fxUsers.ini for storing acceptable user/password combos.</li>
+  </ul>
+
 <h3>Lab 5 (03/28/2019): </h3>
 <ul>
   <li>I modified the login and calulcator pages to add security by checking to see if a session already exists for the user and if not, redirecting them back to the login page.</li>
