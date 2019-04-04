@@ -1,177 +1,120 @@
-<!DOCTYPE html>
 <?php
- //Check if a session is already set! If it is, then bypass the login page.
+//Import the FxDataModel and LoginDataModel classes.
+require_once('FxDataModel.php');
+require_once('LoginDataModel.php');
+
+//If the session isn't already started...then start it.
 if (!isset($_SESSION)) {
     session_start();
 }
-$username = "";
 
-require_once('LoginDataModel.php');
-
-require_once('FxDataModel.php');
-
-if (isset($_SESSION[LoginDataModel::USERNAME])) {
-    $username = $_SESSION[LoginDataModel::USERNAME];
-    if (!isset($_SESSION[FxDataModel::FX_DM_KEY])) {
-        $fxDataModel = new FxDataModel();
-        $_SESSION[FxDataModel::FX_DM_KEY] = serialize($fxDataModel);
-    } else {
-        $fxDataModel = unserialize($_SESSION[FxDataModel::FX_DM_KEY]);
-    }
-} else {
-    include LoginDataModel::LOGIN_FORM_URL;
+//If there is no username in the session variable, include the login page.
+if (!isset($_SESSION[LoginDataModel::USERNAME_SESSION_KEY])) {
+    require_once LoginDataModel::FX_PHP_FILENAME;
     exit;
 }
 
+//If there the FxDataModel is not already in the session, then create a new instance of the FxDataModel class and serialize the object. Otherwise, unserialize the object.
+if (!isset($_SESSION[FxDataModel::FX_SESSION_KEY])) {
+    $fxDataModel = new FxDataModel();
+    $_SESSION[FxDataModel::FX_SESSION_KEY] = serialize($fxDataModel);
+} else {
+    $fxDataModel = unserialize($_SESSION[FxDataModel::FX_SESSION_KEY]);
+}
 
+//Retrieves the arrays for the currency codes and the INI files respectively.
 $fxCurrencies = $fxDataModel->getFxCurrencies();
-$iniArray = $fxDataModel->getIniArray();
+$fxIniArray = $fxDataModel->getIniArray();
 
-$srcCucy = $fxCurrencies[0];
-$dstCucy = $fxCurrencies[0];
-$srcAmt = "";
-$dstAmt = "";
-$error_message = "";
+//Set the text fields for source amount and destination amount to blank.
+$srcAmnt = '';
+$dstAmnt = '';
 
-if (array_key_exists(filter_input(INPUT_POST, $iniArray[FxDataModel::SOURCE_AMOUNT_KEY]))) {
-    $srcCucy = filter_input(INPUT_POST, $iniArray[FxDataModel::SOURCE_CURRENCY_KEY]);
-    $dstCucy = filter_input(INPUT_POST, $iniArray[FxDataModel::DEST_CURRENCY_KEY]);
-    $srcAmt = filter_input(INPUT_POST, $iniArray[FxDataModel::SOURCE_AMOUNT_KEY]);
 
-    if ($srcCucy === $dstCucy) {
-        $error_message = 'Warning! The source and destination currencies are the same. That means that the result will be 1.0; just thought you should know. :)';
-        $srcCucy = $fxCurrencies[0];
-        $dstCucy = $fxCurrencies[0];
-        $srcAmt = "";
-        $dstAmt = "";
-    } else if ($srcAmt === false) {
-        $error_message = 'Error! The source amount must be a valid number (decimals are allowed).';
-        $srcCucy = $fxCurrencies[0];
-        $dstCucy = $fxCurrencies[0];
-        $srcAmt = "";
-        $dstAmt = "";
-    } else if ($srcAmt <= 0) {
-        $error_message = 'Error! The source amount CANNOT be a negative number...at least not on planet Earth!';
-        $srcCucy = $fxCurrencies[0];
-        $dstCucy = $fxCurrencies[0];
-        $srcAmt = "";
-        $dstAmt = "";
-    } else {
-        $error_message = '';
-        $dstAmt = sprintf("%.2f", $srcAmt * $fxDataModel->getFxRate($srcCucy, $dstCucy));
+//If the key for the source currency, destination currency, or the destination amount already exists in POST...
+if (array_key_exists($fxIniArray[FxDataModel::DST_AMT_KEY], $_POST) &&
+        array_key_exists($fxIniArray[FxDataModel::DST_CUCY_KEY], $_POST) &&
+        array_key_exists($fxIniArray[FxDataModel::SRC_CUCY_KEY], $_POST)) {
+
+    // Returns the index of the currency codes array with it's corresponding value.
+    $srcCucy = array_search($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]], $fxCurrencies);
+    $dstCucy = array_search($_POST[$fxIniArray[FxDataModel::DST_CUCY_KEY]], $fxCurrencies);
+
+    //Set the source amount to whatever the user enters in the form.
+    $srcAmnt = $_POST[$fxIniArray[FxDataModel::SRC_AMT_KEY]];
+    //Populate the desintation amount field by calculating the F/X rate using the getOutput function in the FxDataModel class.
+    $dstAmnt = $fxDataModel->getOutput($srcAmnt, $srcCucy, $dstCucy);
+
+    //Variable to check whether the source amount entered by the user is a valid floating point number.
+    $isNumeric = is_numeric($srcAmnt);
+
+    //If the source amount fails the numeric test, then blank both of the text fields.
+    if (!$isNumeric) {
+        $srcAmnt = '';
+        $dstAmnt = '';
     }
 }
 ?>
-
-<!--Start of the HTML form!-->
+<!DOCTYPE html>
 <html>
-
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Ryan's F/X Calculator</title>
-    <link href="css/main.css" rel="stylesheet" type="text/css" />
-    <!--Link the CSS to the page.-->
-</head>
-
-<body>
-    <header>
-        <h1>Ryan's Super F/X Calculator</h1>
+    <head>
+        <title>Ryan's Super F/X Calculator</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/main.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <header>
+            <h1>Ryan's Super F/X Calculator</h1>
+            <h2><?php
+                echo 'Welcome ' . $_SESSION[LoginDataModel::USERNAME_SESSION_KEY] . '!';
+                ?></h2>
+        </header>
         <hr>
-        <h2>Welcome <?php
-                    echo $username . '!';
-                    ?></h2>
-    </header>
-    <br />
-    <main>
-        <form name="<?php
-                    echo $fxDataModel::FORM_NAME_TITLE;
-                    ?>" action="<?php
-                        echo $fxDataModel::FORM_NAME;
-                        ?>" method="post">
 
-            <h3>Choose your source currency code and enter the amount as precise as you want it.</h3>
-            <select name="<?php
-                            echo $iniArray[$fxDataModel::SOURCE_CURRENCY_KEY];
-                            ?>">
-                <?php
-                foreach ($fxCurrencies as $fxCurrency) {
+        <form name="fxCalc" action="fxCalc.php" method="post">
+            <div class="formMain">
+                <h3>Choose your source currency code and enter the amount as precise as you want it.</h3>
+                <select name="<?php echo $fxIniArray[FxDataModel::SRC_CUCY_KEY]; ?>">
+                    <?php
+                    for ($i = 0; $i < count($fxCurrencies); $i++) {
+                        if ($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
+                            echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
+                        } else {
+                            echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
+                        }
+                    }
                     ?>
-                <option value="<?php
-                                echo $fxCurrency;
-                                ?>" <?php
-                            if ($fxCurrency === $srcCucy) {
-                                ?> selected <?php
+                </select>
 
-                                            }
-                                            ?>><?php
-                                    echo $fxCurrency;
-                                    ?></option>
-                <?php
+                <input type="text" name="<?php echo $fxIniArray[FxDataModel::SRC_AMT_KEY]; ?>" value="<?php echo $srcAmnt; ?>">
 
-            }
-            ?>
-            </select>
+                <h3>Now choose your destination currency code and click CALCULATE to receive your result!</h3>
 
-            <input type="text" name="<?php
-                                        echo $iniArray[$fxDataModel::SOURCE_AMOUNT_KEY];
-                                        ?>" value="<?php
-                                if (!is_numeric($srcAmt)) {
-                                    echo " ";
-                                } else {
-                                    echo $srcAmt;
-                                }
-                                ?>" class="textField" />
-
-            <br />
-
-            <h3>Now choose your destination currency code and click CALCULATE to receive your result!</h3>
-            <select name="<?php
-                            echo $iniArray[$fxDataModel::DEST_CURRENCY_KEY];
-                            ?>">
-                <?php
-                foreach ($fxCurrencies as $newcurrency) {
+                <select name="<?php echo $fxIniArray[FxDataModel::DST_CUCY_KEY]; ?>">
+                    <?php
+                    for ($i = 0; $i < count($fxCurrencies); $i++) {
+                        if ($_POST[$fxIniArray[FxDataModel::DST_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
+                            echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
+                        } else {
+                            echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
+                        }
+                    }
                     ?>
-                <option value="<?php
-                                echo $newcurrency;
-                                ?>" <?php
-                                    if ($newcurrency === $dstCucy) {
-                                        ?> selected <?php
+                </select>
 
-                                    }
-                                    ?>><?php
-                                    echo $newcurrency;
-                                    ?></option>
-                <?php
+                <input type="text" readonly name="<?php echo $fxIniArray[FxDataModel::DST_AMT_KEY]; ?>" value="<?php echo $dstAmnt; ?>">
+                <br>
+            </div>
 
-            }
-            ?>
-            </select>
-
-            <input type="text" disabled="disabled" name="<?php
-                                                            echo $iniArray[$fxDataModel::DEST_AMOUNT_KEY];
-                                                            ?>" id="outputText" class="textField" value="<?php
-                                                                    if (isset($_POST[$fxDataModel::CONVERT_BUTTON])) {
-                                                                        echo $dstAmt;
-                                                                    }
-                                                                    ?>" />
-
-            <br /><br />
-
-            <input type="submit" name="<?php
-                                        echo $fxDataModel::CONVERT_BUTTON;
-                                        ?>" value="CALCULATE" class="button" />
-            <input type="reset" name="<?php
-                                        echo $fxDataModel::RESET_BUTTON;
-                                        ?>" value="RESET" onclick="window.location.href = 'fxCalc.php'" class="button" />
-
+            <div id="buttons">
+                <input type="submit" value="CONVERT THAT CURRENCY!" name="submit">
+                <input type="reset" value="RESET" name="reset" onclick="window.location.href = 'fxCalc.php'">
+            </div>
         </form>
-    </main>
 
-    <br />
-
-    <footer>
-        <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
-    </footer>
-</body>
-
-</html> 
+        <footer>
+            <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
+        </footer>
+    </body>
+</html>

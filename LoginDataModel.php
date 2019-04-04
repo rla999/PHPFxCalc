@@ -1,63 +1,62 @@
 <?php
 
-define('LOGIN_INI_FILE', 'login.ini');
+define("LOGIN_INI", "login.ini"); //Define the login INI file as a constant for use in the constructor.
 
 class LoginDataModel {
 
-    //CONSTANTS
-    const USERNAME = "username";
-    const PASSWORD = "password";
-    const FX_CALC_FORM_URL = "fxCalc.php";
-    const LOGIN_BUTTON = "login";
-    const RESET_BUTTON = "reset";
-    const LOGIN_FORM_URL = "login.php";
-    const LOGIN_FORM_NAME = "login.form";
-    const LOGIN_DATA_MODEL = "LoginDataModel.php";
-    const DBHANDLE = "db.handle";
-    const DBUSER = "db.user";
-    const DBPW = "db.pw";
-    const SELECT_STATEMENT = "select.stmt";
-    const BIND_USERNAME = ":username";
-    const BIND_PASSWORD = ":password";
-
-    //Private data members
+    //Private data memebers for the class.
     private $loginArray;
-    private $loginPDO;
-    private $prep_stmt;
+    private $prepareStatement;
 
-    //Login Data Model constructor
+    //Constants for the class to be referred to elsewhere in our app.
+    const USERNAME_KEY = 'username';
+    const PASSWORD_KEY = 'password';
+    const DSN_KEY = 'dsn';
+    const DB_USERNAME_KEY = 'dbuser';
+    const DB_PASSWORD_KEY = 'dbpass';
+    const DB_PREP_STMT = 'loginPrepStmt';
+    const USERNAME_SESSION_KEY = 'usernameSession';
+    const LOGIN_PHP_FILENAME = 'login.php';
+
+    //This constructor parses the login.ini file to create an array. It then creates a new PDO object using the database connection info given in the INI file. It then runs the SQL statement to get access to the users table.
     public function __construct() {
-        $this->loginArray = parse_ini_file(LOGIN_INI_FILE);
-        $this->loginPDO = new PDO($this->loginArray[self::DBHANDLE], $this->loginArray[self::DBUSER], $this->loginArray[self::DBPW]);
-        $this->prep_stmt = $this->loginPDO->prepare($this->loginArray[self::SELECT_STATEMENT]);
+
+        $this->loginArray = parse_ini_file(LOGIN_INI);
+        $loginPDO = new PDO(
+                $this->loginArray[self::DSN_KEY],
+                $this->loginArray[self::DB_USERNAME_KEY],
+                $this->loginArray[self::DB_PASSWORD_KEY]
+        );
+
+        $this->prepareStatement = $loginPDO->prepare($this->loginArray[self::DB_PREP_STMT]);
     }
 
-    /*
-     * This method accepts two strings meant to represent the username and password. 
-     * By using the array of username => password pairs created at construction, 
-     * this method can return TRUE if the pair agree; FALSE, otherwise. 
-     */
+    //This destructor function destroys the login session when called.
+    public function __destruct() {
+        $loginPDO = null;
+    }
 
+    //This function checks to see if the user and password match an entry in the database. When it's done it uses the closeCursor method to free up resources.
     public function validateUser($username, $password) {
-        $this->prep_stmt->bindParam(self::BIND_USERNAME, $username);
-        $this->prep_stmt->bindParam(self::BIND_PASSWORD, $password);
-        $this->prep_stmt->execute();
-        if ($this->prep_stmt->rowCount()) {
+        $this->prepareStatement->bindParam(':username', $username);
+        $this->prepareStatement->bindParam(':password', $password);
+
+        $this->prepareStatement->execute();
+
+        if ($this->prepareStatement->rowCount()) {
             return true;
         } else {
             return false;
         }
-        $this->prep_stmt->closeCursor();
+
+        $this->prepareStatement->closeCursor();
     }
 
-    //Return the associative array for the login INI file.
+    //Returns the array created from parsing the login.ini file.
     public function getLoginArray() {
         return $this->loginArray;
     }
 
-    //Destroy the PDO object.
-    public function __destruct() {
-        $this->loginPDO = NULL;
-    }
-
 }
+
+?>
