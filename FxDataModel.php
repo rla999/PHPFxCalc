@@ -22,7 +22,6 @@ class FxDataModel {
     private $currencyCodes = array();
     private $fxRates = array();
     private $iniArray;
-    private $array;
 
     /*
      * This constructor does a lot! First, it parses the fxCalc.ini file.
@@ -53,7 +52,6 @@ class FxDataModel {
         $prepareStatement->execute();
 
         $data = $prepareStatement->fetchAll(PDO::FETCH_ASSOC);
-        $this->array = $data;
 
         $len = count($data);
         for ($i = 0; $i < $len; $i++) {
@@ -106,11 +104,6 @@ class FxDataModel {
     //Returns the array created by the INI file.
     public function getIniArray() {
         return $this->iniArray;
-    }
-
-    //Returns the local array of data pulled from the DB.
-    public function getData() {
-        return $this->array;
     }
 
 }

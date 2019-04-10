@@ -10,7 +10,7 @@ if (!isset($_SESSION)) {
 
 //If there is no username in the session variable, include the login page.
 if (!isset($_SESSION[LoginDataModel::USERNAME_SESSION_KEY])) {
-    require_once LoginDataModel::FX_PHP_FILENAME;
+    require_once LoginDataModel::LOGIN_PHP_FILENAME;
     exit;
 }
 
