@@ -3,7 +3,11 @@
 //Define the fxCalc.ini file as a constant to be used in the constructor.
 define("FX_CALC_INI", "fxCalc.ini");
 
-class FxDataModel {
+//Include the error data model class for our custom exception handling.
+include_once('ErrorDataModel.php');
+
+class FxDataModel
+{
 
     //Constants for the class. 
     const DST_AMT_KEY = 'dst.amt';
@@ -38,49 +42,57 @@ class FxDataModel {
      * Also this approach got rid of those pesky undefined index warnings when I was viewing my app.
      */
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->iniArray = parse_ini_file(FX_CALC_INI);
 
-        $fxPDO = new PDO(
+        try {
+            $fxPDO = new PDO(
                 $this->iniArray[self::DSN_KEY],
                 $this->iniArray[self::DB_USERNAME_KEY],
                 $this->iniArray[self::DB_PASSWORD_KEY]
-        );
+            );
 
-        $prepareStatement = $fxPDO->prepare($this->iniArray[self::DB_PREP_STMT]);
+            $prepareStatement = $fxPDO->prepare($this->iniArray[self::DB_PREP_STMT]);
 
-        $prepareStatement->execute();
+            $prepareStatement->execute();
 
-        $data = $prepareStatement->fetchAll(PDO::FETCH_ASSOC);
+            $data = $prepareStatement->fetchAll(PDO::FETCH_ASSOC);
 
-        $len = count($data);
-        for ($i = 0; $i < $len; $i++) {
-            if (in_array($data[$i][$this->iniArray[self::SRC_CUCY_KEY]], $this->currencyCodes)) {
-                
-            } else {
-                array_push($this->currencyCodes, $data[$i][$this->iniArray[self::SRC_CUCY_KEY]]);
+            $len = count($data);
+            for ($i = 0; $i < $len; $i++) {
+                if (in_array($data[$i][$this->iniArray[self::SRC_CUCY_KEY]], $this->currencyCodes)) { } else {
+                    array_push($this->currencyCodes, $data[$i][$this->iniArray[self::SRC_CUCY_KEY]]);
+                }
+
+                if (in_array($data[$i][$this->iniArray[self::DST_CUCY_KEY]], $this->currencyCodes)) { } else {
+                    array_push($this->currencyCodes, $data[$i][$this->iniArray[self::DST_CUCY_KEY]]);
+                }
+
+                $this->fxRates[$data[$i][$this->iniArray[self::SRC_CUCY_KEY]] . $data[$i][$this->iniArray[self::DST_CUCY_KEY]]] = $data[$i][$this->iniArray[self::FX_RATE]];
             }
 
-            if (in_array($data[$i][$this->iniArray[self::DST_CUCY_KEY]], $this->currencyCodes)) {
-                
-            } else {
-                array_push($this->currencyCodes, $data[$i][$this->iniArray[self::DST_CUCY_KEY]]);
-            }
-
-            $this->fxRates[$data[$i][$this->iniArray[self::SRC_CUCY_KEY]] . $data[$i][$this->iniArray[self::DST_CUCY_KEY]]] = $data[$i][$this->iniArray[self::FX_RATE]];
+            $prepareStatement->closeCursor();
+            $fxPDO = null;
+        } catch (PDOException $e) {
+            header(ErrorDataModel::getErrorUrl($e->getMessage()));
+            exit;
         }
-
-        $prepareStatement->closeCursor();
-        $fxPDO = null;
     }
 
     //Returns the array of country codes.
-    public function getFxCurrencies() {
+    public function getFxCurrencies()
+    {
         return $this->currencyCodes;
     }
 
-    //Returns the array of F/X rates given a source currency code and a destination currency code. Returns 1.0 if the user selects the same code for both.
-    public function getFxRate($srcCurrency, $dstCurrency) {
+    /*Returns the array of F/X rates given a source currency code and a destination currency code. 
+    Returns 1.0 if the user selects the same code for both.
+    Starting with lb 7, only source -> destination direction is stored in DB. 
+    The reciprocal (for when user wants destination -> source) is dervied in the new version of the getFxRte function.
+    */
+    public function getFxRate($srcCurrency, $dstCurrency)
+    {
         $srcCurrency = $this->currencyCodes[$srcCurrency];
         $dstCurrency = $this->currencyCodes[$dstCurrency];
 
@@ -96,16 +108,15 @@ class FxDataModel {
     }
 
     //Returns the converted value (dstAmnt in the form). Better to have it in the data model instead of having it locally defined on the form page itself like in my previous labs.
-    public function getOutput($srcAmnt, $srcCurrency, $dstCurrency) {
-//        return $srcAmnt * (double) $this->getFxRate($srcCurrency, $dstCurrency);
-        return number_format($srcAmnt * (double) $this->getFxRate($srcCurrency, $dstCurrency), 2);
+    public function getOutput($srcAmnt, $srcCurrency, $dstCurrency)
+    {
+        //        return $srcAmnt * (double) $this->getFxRate($srcCurrency, $dstCurrency);
+        return number_format($srcAmnt * (double)$this->getFxRate($srcCurrency, $dstCurrency), 2);
     }
 
     //Returns the array created by the INI file.
-    public function getIniArray() {
+    public function getIniArray()
+    {
         return $this->iniArray;
     }
-
 }
-
-?>

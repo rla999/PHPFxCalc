@@ -32,9 +32,11 @@ $dstAmnt = '';
 
 
 //If the key for the source currency, destination currency, or the destination amount already exists in POST...
-if (array_key_exists($fxIniArray[FxDataModel::DST_AMT_KEY], $_POST) &&
-        array_key_exists($fxIniArray[FxDataModel::DST_CUCY_KEY], $_POST) &&
-        array_key_exists($fxIniArray[FxDataModel::SRC_CUCY_KEY], $_POST)) {
+if (
+    array_key_exists($fxIniArray[FxDataModel::DST_AMT_KEY], $_POST) &&
+    array_key_exists($fxIniArray[FxDataModel::DST_CUCY_KEY], $_POST) &&
+    array_key_exists($fxIniArray[FxDataModel::SRC_CUCY_KEY], $_POST)
+) {
 
     // Returns the index of the currency codes array with it's corresponding value.
     $srcCucy = array_search($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]], $fxCurrencies);
@@ -57,64 +59,67 @@ if (array_key_exists($fxIniArray[FxDataModel::DST_AMT_KEY], $_POST) &&
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Ryan's Super F/X Calculator</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="css/main.css" rel="stylesheet" type="text/css"/>
-    </head>
-    <body>
-        <header>
-            <h1>Ryan's Super F/X Calculator</h1>
-            <h2><?php
-                echo 'Welcome ' . $_SESSION[LoginDataModel::USERNAME_SESSION_KEY] . '!';
-                ?></h2>
-        </header>
-        <hr>
 
-        <form name="fxCalc" action="fxCalc.php" method="post">
-            <div class="formMain">
-                <h3>Choose your source currency code and enter the amount as precise as you want it.</h3>
-                <select name="<?php echo $fxIniArray[FxDataModel::SRC_CUCY_KEY]; ?>">
-                    <?php
-                    for ($i = 0; $i < count($fxCurrencies); $i++) {
-                        if ($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
-                            echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
-                        } else {
-                            echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
-                        }
+<head>
+    <title>Ryan's Super F/X Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <header>
+        <h1>Ryan's Super F/X Calculator</h1>
+        <h2><?php
+            echo 'Welcome ' . $_SESSION[LoginDataModel::USERNAME_SESSION_KEY] . '!';
+            ?></h2>
+    </header>
+    <hr>
+
+    <form name="fxCalc" action="fxCalc.php" method="post">
+        <div class="formMain">
+            <h3>Choose your source currency code and enter the amount as precise as you want it.</h3>
+            <select name="<?php echo $fxIniArray[FxDataModel::SRC_CUCY_KEY]; ?>">
+                <?php
+                for ($i = 0; $i < count($fxCurrencies); $i++) {
+                    if ($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
+                        echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
+                    } else {
+                        echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
                     }
-                    ?>
-                </select>
+                }
+                ?>
+            </select>
 
-                <input type="text" name="<?php echo $fxIniArray[FxDataModel::SRC_AMT_KEY]; ?>" value="<?php echo $srcAmnt; ?>">
+            <input type="text" name="<?php echo $fxIniArray[FxDataModel::SRC_AMT_KEY]; ?>" value="<?php echo $srcAmnt; ?>">
 
-                <h3>Now choose your destination currency code and click CALCULATE to receive your result!</h3>
+            <h3>Now choose your destination currency code and click CALCULATE to receive your result!</h3>
 
-                <select name="<?php echo $fxIniArray[FxDataModel::DST_CUCY_KEY]; ?>">
-                    <?php
-                    for ($i = 0; $i < count($fxCurrencies); $i++) {
-                        if ($_POST[$fxIniArray[FxDataModel::DST_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
-                            echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
-                        } else {
-                            echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
-                        }
+            <select name="<?php echo $fxIniArray[FxDataModel::DST_CUCY_KEY]; ?>">
+                <?php
+                for ($i = 0; $i < count($fxCurrencies); $i++) {
+                    if ($_POST[$fxIniArray[FxDataModel::DST_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
+                        echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
+                    } else {
+                        echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
                     }
-                    ?>
-                </select>
+                }
+                ?>
+            </select>
 
-                <input type="text" readonly name="<?php echo $fxIniArray[FxDataModel::DST_AMT_KEY]; ?>" value="<?php echo $dstAmnt; ?>">
-                <br>
-            </div>
+            <input type="text" readonly name="<?php echo $fxIniArray[FxDataModel::DST_AMT_KEY]; ?>" value="<?php echo $dstAmnt; ?>">
+            <br>
+        </div>
 
-            <div id="buttons">
-                <input type="submit" value="CONVERT THAT CURRENCY!" name="submit">
-                <input type="reset" value="RESET" name="reset" onclick="window.location.href = 'fxCalc.php'">
-            </div>
-        </form>
+        <div id="buttons">
+            <input type="submit" value="CONVERT THAT CURRENCY!" name="submit">
+            <input type="reset" value="RESET" name="reset" onclick="window.location.href = 'fxCalc.php'">
+        </div>
+    </form>
 
-        <footer>
-            <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
-        </footer>
-    </body>
+    <footer>
+        <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
+    </footer>
+</body>
+
 </html>
