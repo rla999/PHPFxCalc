@@ -102,7 +102,7 @@ if (
                     <select placeholder="Choose a source currency code." name="<?php echo $fxIniArray[FxDataModel::SRC_CUCY_KEY]; ?>" class="form-control custom-select mb-2" required id="sourceCurrency">
                         <?php
                         for ($i = 0; $i < count($fxCurrencies); $i++) {
-                            if ($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
+                            if ($_POST[$fxIniArray[FxDataModel::SRC_CUCY_KEY]] === $fxCurrencies[$i]) {
                                 echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
                             } else {
                                 echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';
@@ -123,7 +123,7 @@ if (
                     <select placeholder="Choose a destination currency code." name="<?php echo $fxIniArray[FxDataModel::DST_CUCY_KEY]; ?>" class="form-control custom-select mb-2" id="destinationCurrency" required>
                         <?php
                         for ($i = 0; $i < count($fxCurrencies); $i++) {
-                            if ($_POST[$fxIniArray[FxDataModel::DST_CUCY_KEY]] === $fxCurrencies[$i] && $isNumeric) {
+                            if ($_POST[$fxIniArray[FxDataModel::DST_CUCY_KEY]] === $fxCurrencies[$i]) {
                                 echo '<option value="' . $fxCurrencies[$i] . '" selected>' . $fxCurrencies[$i] . '</option>';
                             } else {
                                 echo '<option value="' . $fxCurrencies[$i] . '">' . $fxCurrencies[$i] . '</option>';

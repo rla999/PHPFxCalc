@@ -11,6 +11,7 @@ class LoginDataModel
     //Private data memebers for the class.
     private $loginArray;
     private $prepareStatement;
+    private $loginPDO;
 
     //Constants for the class to be referred to elsewhere in our app.
     const USERNAME_KEY = 'username';
@@ -31,13 +32,13 @@ class LoginDataModel
 
         $this->loginArray = parse_ini_file(LOGIN_INI);
         try {
-            $loginPDO = new PDO(
+            $this->loginPDO = new PDO(
                 $this->loginArray[self::DSN_KEY],
                 $this->loginArray[self::DB_USERNAME_KEY],
                 $this->loginArray[self::DB_PASSWORD_KEY]
             );
 
-            $this->prepareStatement = $loginPDO->prepare($this->loginArray[self::DB_PREP_STMT]);
+            $this->prepareStatement = $this->loginPDO->prepare($this->loginArray[self::DB_PREP_STMT]);
         } catch (PDOException $e) {
             header(ErrorDataModel::getErrorUrl($e->getMessage()));
             exit;
@@ -47,7 +48,7 @@ class LoginDataModel
     //This destructor function destroys the login session when called.
     public function __destruct()
     {
-        $loginPDO = null;
+        $this->loginPDO = null;
     }
 
     /*This function checks to see if the user and password match an entry in the database. 

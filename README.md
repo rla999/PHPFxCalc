@@ -4,14 +4,7 @@ To see any versions of this app prior to Lab 4, please consult other repos on my
 
 <h2> <strong>Changelog:</strong> </h2>
 
-<h3>Lab 7 (04/10/2019): </h3>
-<ul>
-  <li>Refined the database table for fxRates to remove reciprocal entries (e.g. only have CAD->EUR no need for EUR->CAD) and self entries (e.g. USD->USD). Self entries return 1.0 and recripocals don't need to be in the DB--that wastes space when refining the getFxRates function to detect and calcualte self rates and reciprocals is more efficient.</li>
-  <li>Added custom exception handling to handle anything that queries a database. Users are brought to the error.php page whenever an exception occurs. It tells them to go back and try again, but also gives errors on the detail that they could send to the web admin.</li>
-  <li>Implemented Bootstrap 4 for the pages so that is easier to style them and who knew a simple app like this should be mobile friendly if it were to be hosted on a live server.</li>
-  </ul>
-
-<h3>Lab 6 (04/03/2019): </h3>
+<h3>Lb 6 (04/03/2019): </h3>
 <ul>
   <li>I changed the LoginDataModel and the FxDataModel to allow a database connection to a local MySQL database for storing the users/passwords and the currency information.</li>
   <li>So no more csv file and no more fxUsers.ini for storing acceptable user/password combos.</li>
