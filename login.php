@@ -44,35 +44,53 @@ if (
     <title>Ryan's Super F/X Calculator</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- I am using Bootstrap 4 to make styling easier. I may still use some custom CSS to override some styles if I want. -->
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- Custom CSS -->
     <link href="css/main.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body>
-    <header>
-        <h1>Login to Ryan's Super F/X Calculator</h1>
-    </header>
-    <form name="login" action="login.php" method="post">
-        <label for="username">Username</label>
-        <input type="text" name="<?php echo $loginArray[LoginDataModel::USERNAME_KEY]; ?>">
-
-        <br />
-
-        <label for="password">Password</label>
-        <input type="password" name="<?php echo $loginArray[LoginDataModel::PASSWORD_KEY]; ?>">
-
-        <br />
-
-        <div class="buttons">
-            <input type="submit" value="LOGIN" name="login" id="loginButton">
-            <input type="reset" value="RESET" name="reset" onclick="window.location.href = 'login.php'" id="resetButton">
+<body class="bg-light">
+    <div class="container center">
+        <header>
+            <h1 class="display-1 text-primary">Login to Ryan's Super F/X Calculator</h1>
+        </header>
+        <div class="row">
+            <form name="login" action="login.php" method="post" class="was-validated">
+                <div class="form-group col-md">
+                    <label for="username">Username</label>
+                    <input type="text" placeholder="Enter username." name="<?php echo $loginArray[LoginDataModel::USERNAME_KEY]; ?>" class="form-control mb-2" id="username" required>
+                </div>
+                <div class="form-group col-md">
+                    <label for="password">Password</label>
+                    <input type="password" placeholder="Enter password." name="<?php echo $loginArray[LoginDataModel::PASSWORD_KEY]; ?>" class="form-control mb-2" id="password" required>
+                </div>
+                <div class=" btn-group form-group col-md">
+                    <input type="submit" value="LOGIN" name="login" id="loginButton" class="btn btn-outline-primary mb-2">
+                    <input type="reset" value="RESET" name="reset" onclick="window.location.href = 'login.php'" id="resetButton" class="btn btn-outline-warning mb-2">
+                </div>
         </div>
 
+        </form>
 
-    </form>
+        <footer class="font-italic text-secondary">
+            <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
+        </footer>
+    </div>
 
-    <footer>
-        <p>Copyright (c) 2019 Ryan Lasher. Unauthorized copying of my student work is not the right thing to do, but be inspired by the way I designed my page and come up with your own creative implementation!</p>
-    </footer>
 </body>
 
 </html>
